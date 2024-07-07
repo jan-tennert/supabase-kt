@@ -33,6 +33,7 @@ include(":plugins:ComposeAuth")
 include(":plugins:ComposeAuthUI")
 include(":plugins:CoilIntegration")
 include(":plugins:ImageLoaderIntegration")
+include(":plugins:GenDatabaseTypes:gdp-ksp")
 
 // Samples
 if (System.getProperty("LibrariesOnly") != "true") {

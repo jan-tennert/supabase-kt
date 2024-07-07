@@ -32,6 +32,8 @@ androidx-core = "1.13.1"
 androidx-compat = "1.7.0"
 androidx-lifecycle = "2.8.3"
 filekit = "0.6.1"
+ksp = "2.0.0-1.0.21"
+kpoet = "1.18.0"
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -108,6 +110,9 @@ androidsvg = { module = "com.caverock:androidsvg-aar", version.ref = "androidsvg
 
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 imageloader = { module = "io.github.qdsfdhvh:image-loader", version.ref = "imageloader" }
+
+ksp-processing-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
+kotlin-poet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kpoet"}
 
 # Sample dependencies
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
