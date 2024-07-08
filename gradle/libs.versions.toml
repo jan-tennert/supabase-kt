@@ -34,6 +34,7 @@ androidx-lifecycle = "2.8.3"
 filekit = "0.6.1"
 ksp = "2.0.0-1.0.21"
 kpoet = "1.18.0"
+serialization = "1.7.1"
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -113,6 +114,7 @@ imageloader = { module = "io.github.qdsfdhvh:image-loader", version.ref = "image
 
 ksp-processing-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 kotlin-poet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kpoet"}
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 
 # Sample dependencies
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }

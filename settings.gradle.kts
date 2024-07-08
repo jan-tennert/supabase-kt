@@ -34,6 +34,8 @@ include(":plugins:ComposeAuthUI")
 include(":plugins:CoilIntegration")
 include(":plugins:ImageLoaderIntegration")
 include(":plugins:GenDatabaseTypes:gdp-ksp")
+include(":plugins:GenDatabaseTypes:gdp-plugin")
+include(":plugins:GenDatabaseTypes:gdp-core")
 
 // Samples
 if (System.getProperty("LibrariesOnly") != "true") {
