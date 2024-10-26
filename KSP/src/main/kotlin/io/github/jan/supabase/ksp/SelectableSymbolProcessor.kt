@@ -7,6 +7,7 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
@@ -103,13 +104,7 @@ class SelectableSymbolProcessor(
             ?.arguments?.getParameterValue<String>(ApplyFunction.FUNCTION_PARAMETER_NAME)
         val cast = parameter.annotations.getAnnotationOrNull(Cast::class.java.simpleName)
             ?.arguments?.getParameterValue<String>(Cast.TYPE_PARAMETER_NAME)
-        checkValidCombinations(
-            parameterName = parameter.name!!.asString(),
-            isForeign = isForeign,
-            jsonPath = jsonPath,
-            function = function
-        )
-        return buildColumns(
+        val options = ColumnOptions(
             alias = alias,
             columnName = columnName,
             isForeign = isForeign,
@@ -117,71 +112,76 @@ class SelectableSymbolProcessor(
             returnAsText = returnAsText,
             function = function,
             cast = cast,
-            innerColumns = innerColumns,
+            innerColumns = innerColumns
+        )
+        checkValidCombinations(
             parameterName = parameter.name!!.asString(),
+            options = options,
+            symbol = parameter
+        )
+        return buildColumns(
+            options = options,
+            parameterName = parameter.name!!.asString(),
+            symbol = parameter,
             qualifiedTypeName = parameterClass.qualifiedName!!.asString()
         )
     }
 
     private fun checkValidCombinations(
+        options: ColumnOptions,
         parameterName: String,
-        isForeign: Boolean,
-        jsonPath: List<String>?,
-        function: String?
+        symbol: KSNode
     ) {
-        require(!isForeign || jsonPath == null) {
-            "Parameter $parameterName can't have both @Foreign and @JsonPath annotation"
+        if(options.isForeign && options.jsonPath != null) {
+            logger.error("Parameter $parameterName can't have both @Foreign and @JsonPath annotation", symbol)
         }
-        require(!isForeign  || function == null) {
-            "Parameter $parameterName can't have both @Foreign and @ApplyFunction annotation"
+        if(options.isForeign && options.function != null) {
+            logger.error("Parameter $parameterName can't have both @Foreign and @ApplyFunction annotation", symbol)
         }
-        require(jsonPath == null || function == null) {
-            "Parameter $parameterName can't have both @JsonPath and @ApplyFunction annotation"
+        if(options.jsonPath != null && options.function != null) {
+            logger.error("Parameter $parameterName can't have both @JsonPath and @ApplyFunction annotation", symbol)
+        }
+        if(options.jsonPath != null && options.jsonPath.isEmpty()) {
+            logger.error("Parameter $parameterName can't have an empty @JsonPath annotation. At least two elements (the column name and a key) are required.", symbol)
         }
     }
 
     private fun buildColumns(
-        alias: String,
-        columnName: String,
-        isForeign: Boolean,
-        jsonPath: List<String>?,
-        returnAsText: Boolean,
-        function: String?,
-        cast: String?,
-        innerColumns: String,
+        options: ColumnOptions,
         parameterName: String,
-        qualifiedTypeName: String
+        qualifiedTypeName: String,
+        symbol: KSNode
     ): String {
         return buildString {
-            if(jsonPath != null) {
-                append(buildJsonPath(jsonPath, returnAsText))
+            if(options.jsonPath != null) {
+                append(buildJsonPath(options.jsonPath, options.returnAsText))
                 return@buildString
             }
 
             //If the alias is the same as the column name, we can just assume parameter name (alias) is the column name
-            if(alias == columnName) {
-                append(alias)
+            if(options.alias == options.columnName) {
+                append(options.alias)
             } else {
-                append("$alias:$columnName")
+                append("${options.alias}:${options.columnName}")
             }
-            if(isForeign) {
-                append("($innerColumns)")
+            if(options.isForeign) {
+                append("(${options.innerColumns})")
                 return@buildString
             }
 
             //If a custom cast is provided, use it
-            if(cast != null && cast.isNotEmpty()) {
-                append("::$cast")
-            } else if(cast != null) { //If cast is empty, try to auto-cast
+            if(options.cast != null && options.cast.isNotEmpty()) {
+                append("::${options.cast}")
+            } else if(options.cast != null) { //If cast is empty, try to auto-cast
                 val autoCast = primitiveColumnTypes[qualifiedTypeName]
                 if(autoCast != null) {
                     append("::$autoCast")
                 } else {
-                    logger.error("Type of parameter $parameterName is not a primitive type and does not have an automatic cast type")
+                    logger.error("Type of parameter $parameterName is not a primitive type and does not have an automatic cast type. Try to specify it manually.", symbol)
                 }
             }
-            if(function != null) {
-                append(".$function()")
+            if(options.function != null) {
+                append(".${options.function}()")
             }
         }
     }

@@ -15,7 +15,7 @@ package io.github.jan.supabase.postgrest.annotations
  * data class Example(@JsonPath("data", "id") val id: Int)
  * ```
  *
- * @param path The path to the JSON property.
+ * @param path The path to the JSON property. The first element of the array is always the column name.
  * @param returnAsText Whether to return the JSON property as text. If `true`, the JSON property will be returned as a string. If `false`, the JSON property will be returned as JSON.
  *
  */
