@@ -9,6 +9,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSValueParameter
+import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.PropertySpec
@@ -32,8 +33,8 @@ class SelectableSymbolProcessor(
         symbols.forEach { symbol ->
             val className = symbol.simpleName.asString()
             val packageName = symbol.containingFile?.packageName?.asString().orEmpty()
-            if (!symbol.modifiers.containsIgnoreCase("data")) {
-                logger.error("This object is not a data class", symbol)
+            if (!symbol.modifiers.contains(Modifier.DATA)) {
+                logger.error("The class $className is not a data class", symbol)
                 return emptyList()
             }
             val companionObject = symbol.anyCompanionObject()
@@ -82,8 +83,9 @@ class SelectableSymbolProcessor(
         val innerColumns = if(!isPrimitive(parameterClass!!.qualifiedName!!.asString())) {
             val annotation = parameterClass.annotations.getAnnotationOrNull(Selectable::class.java.simpleName)
             if(annotation == null) {
-                logger.error("Type of parameter ${parameter.name!!.getShortName()} is not a primitive type and does not have @Selectable annotation", parameter)
-                return ""
+                //Could be a JSON column or a custom type, so don't throw an error
+                logger.info("Type of parameter ${parameter.name!!.getShortName()} is not a primitive type and does not have @Selectable annotation", parameter)
+                ""
             } else {
                 val columns = parameterClass.primaryConstructor?.parameters
                 if(columns == null) {
