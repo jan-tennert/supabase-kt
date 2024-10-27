@@ -1,5 +1,6 @@
 package io.github.jan.supabase.postgrest.annotations
 
+import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.postgrest.query.PostgrestQueryBuilder
 
 /**
@@ -40,4 +41,5 @@ import io.github.jan.supabase.postgrest.query.PostgrestQueryBuilder
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
+@SupabaseExperimental
 annotation class Selectable

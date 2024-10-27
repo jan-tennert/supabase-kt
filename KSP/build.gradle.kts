@@ -17,4 +17,5 @@ dependencies {
 
 tasks.named<KotlinCompilationTask<*>>("compileKotlin").configure {
     compilerOptions.freeCompilerArgs.add("-opt-in=io.github.jan.supabase.annotations.SupabaseInternal")
+    compilerOptions.freeCompilerArgs.add("-opt-in=io.github.jan.supabase.annotations.SupabaseExperimental")
 }
