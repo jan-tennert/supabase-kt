@@ -9,5 +9,4 @@ data class ColumnOptions(
     val function: String?,
     val cast: String?,
     val innerColumns: String,
-    val jsonKey: String?
 )

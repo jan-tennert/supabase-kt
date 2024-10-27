@@ -101,7 +101,6 @@ class SelectableSymbolProcessor(
         val isForeign = parameter.annotations.getAnnotationOrNull(Foreign::class.java.simpleName) != null
         val jsonPathArguments = parameter.annotations.getAnnotationOrNull(JsonPath::class.java.simpleName)?.arguments
         val jsonPath = jsonPathArguments?.getParameterValue<ArrayList<String>>(JsonPath.PATH_PARAMETER_NAME)
-        val jsonKey = jsonPathArguments?.getParameterValue<String>(JsonPath.KEY_PARAMETER_NAME)
         val returnAsText = jsonPathArguments?.getParameterValue<Boolean>(JsonPath.RETURN_AS_TEXT_PARAMETER_NAME) == true
         val function = parameter.annotations.getAnnotationOrNull(ApplyFunction::class.java.simpleName)
             ?.arguments?.getParameterValue<String>(ApplyFunction.FUNCTION_PARAMETER_NAME)
@@ -112,7 +111,6 @@ class SelectableSymbolProcessor(
             columnName = columnName,
             isForeign = isForeign,
             jsonPath = jsonPath,
-            jsonKey = jsonKey,
             returnAsText = returnAsText,
             function = function,
             cast = cast,
@@ -145,8 +143,11 @@ class SelectableSymbolProcessor(
         if(options.jsonPath != null && options.function != null) {
             logger.error("Parameter $parameterName can't have both @JsonPath and @ApplyFunction annotation", symbol)
         }
-        if(options.jsonKey != null && options.columnName == null) {
+        if(options.jsonPath != null && options.columnName == null) {
             logger.error("Parameter $parameterName must have a @ColumnName annotation when using @JsonPath", symbol)
+        }
+        if(options.jsonPath != null && options.jsonPath.isEmpty()) {
+            logger.error("Parameter $parameterName must have at least one path in @JsonPath annotation", symbol)
         }
     }
 
@@ -158,10 +159,10 @@ class SelectableSymbolProcessor(
     ): String {
         return buildString {
             if(options.jsonPath != null) {
-                if(options.alias != options.jsonKey) {
+                if(options.alias != options.jsonPath.last()) {
                     append("${options.alias}:")
                 }
-                append(buildJsonPath(options.columnName, options.jsonKey, options.jsonPath, options.returnAsText))
+                append(buildJsonPath(options.columnName, options.jsonPath, options.returnAsText))
                 return@buildString
             }
 
@@ -195,20 +196,19 @@ class SelectableSymbolProcessor(
 
     private fun buildJsonPath(
         columnName: String?,
-        jsonKey: String?,
         jsonPath: List<String>,
         returnAsText: Boolean
     ): String {
         val operator = if(returnAsText) "->>" else "->"
         return buildString {
             append(columnName)
-            if(jsonPath.isNotEmpty()) {
-                jsonPath.forEach {
+            if(jsonPath.size > 1) {
+                jsonPath.dropLast(1).forEach {
                     append("->$it")
                 }
             }
             append(operator)
-            append(jsonKey)
+            append(jsonPath.last())
         }
     }
 
