@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+
 plugins {
     id(libs.plugins.kotlin.jvm.get().pluginId)
 }
@@ -11,4 +13,8 @@ dependencies {
     implementation(libs.kotlin.poet)
     implementation(libs.kotlin.poet.ksp)
     implementation(project(":postgrest-kt"))
+}
+
+tasks.named<KotlinCompilationTask<*>>("compileKotlin").configure {
+    compilerOptions.freeCompilerArgs.add("-opt-in=io.github.jan.supabase.annotations.SupabaseInternal")
 }

@@ -1,5 +1,7 @@
 package io.github.jan.supabase.postgrest.annotations
 
+import io.github.jan.supabase.annotations.SupabaseInternal
+
 /**
  * Annotation to specify a JSON path in a PostgREST query.
  *
@@ -24,8 +26,8 @@ package io.github.jan.supabase.postgrest.annotations
 annotation class JsonPath(vararg val path: String, val returnAsText: Boolean = false) {
 
     companion object {
-        const val PATH_PARAMETER_NAME = "path"
-        const val RETURN_AS_TEXT_PARAMETER_NAME = "returnAsText"
+        @SupabaseInternal const val PATH_PARAMETER_NAME = "path"
+        @SupabaseInternal const val RETURN_AS_TEXT_PARAMETER_NAME = "returnAsText"
     }
 
 }

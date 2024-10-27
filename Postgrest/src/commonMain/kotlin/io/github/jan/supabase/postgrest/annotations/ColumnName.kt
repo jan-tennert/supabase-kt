@@ -1,5 +1,7 @@
 package io.github.jan.supabase.postgrest.annotations
 
+import io.github.jan.supabase.annotations.SupabaseInternal
+
 /**
  * Annotation to specify the name of a column in a PostgREST query.
  *
@@ -11,7 +13,7 @@ package io.github.jan.supabase.postgrest.annotations
 annotation class ColumnName(val name: String) {
 
     companion object {
-        const val NAME_PARAMETER_NAME = "name"
+        @SupabaseInternal const val NAME_PARAMETER_NAME = "name"
     }
 
 }
