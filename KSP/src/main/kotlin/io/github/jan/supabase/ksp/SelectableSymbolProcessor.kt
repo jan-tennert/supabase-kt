@@ -7,39 +7,42 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.ksp.toClassName
+import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.annotations.ApplyFunction
 import io.github.jan.supabase.postgrest.annotations.Cast
 import io.github.jan.supabase.postgrest.annotations.ColumnName
 import io.github.jan.supabase.postgrest.annotations.Foreign
 import io.github.jan.supabase.postgrest.annotations.JsonPath
 import io.github.jan.supabase.postgrest.annotations.Selectable
-import io.github.jan.supabase.postgrest.query.Columns
 
 class SelectableSymbolProcessor(
     private val codeGenerator: CodeGenerator,
     private val logger: KSPLogger,
     private val options: Map<String, String>
 ) : SymbolProcessor {
+
+    val packageName = options["packageName"] ?: "io.github.jan.supabase.postgrest"
+    val fileName = options["fileName"] ?: "PostgrestColumns"
+
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbols = resolver.getSymbolsWithAnnotation(Selectable::class.java.name).filterIsInstance<KSClassDeclaration>()
         if (!symbols.iterator().hasNext()) return emptyList()
+        val types = hashMapOf<String, String>()
         symbols.forEach { symbol ->
             val className = symbol.simpleName.asString()
-            val packageName = symbol.containingFile?.packageName?.asString().orEmpty()
+            val qualifiedName = symbol.qualifiedName?.asString()
+            if(qualifiedName == null) {
+                logger.error("Qualified name of $className is null", symbol)
+                return@forEach;
+            }
             if (!symbol.modifiers.contains(Modifier.DATA)) {
                 logger.error("The class $className is not a data class", symbol)
-                return emptyList()
-            }
-            val companionObject = symbol.anyCompanionObject()
-            if(companionObject == null) {
-                logger.error("Companion object not found", symbol)
                 return emptyList()
             }
             val parameters = symbol.primaryConstructor?.parameters
@@ -48,30 +51,31 @@ class SelectableSymbolProcessor(
                 return emptyList()
             }
             val columns = parameters.map { processParameters(it, resolver) }.joinToString(",")
-            writeColumnsExtensionProperty(symbol, companionObject, columns, "${className}Columns", packageName)
+            types[qualifiedName] = columns
         }
+        writePostgrestExtensionFunction(types, symbols.mapNotNull { it.containingFile }.toList())
         return emptyList()
     }
 
-    private fun writeColumnsExtensionProperty(
-        symbol: KSClassDeclaration,
-        companionObject: KSClassDeclaration,
-        columns: String,
-        className: String,
-        packageName: String
+    private fun writePostgrestExtensionFunction(
+        columns: Map<String, String>,
+        sources: List<KSFile>
     ) {
-        val fileSpec = FileSpec.builder(packageName, className)
-            .addImport("io.github.jan.supabase.postgrest.query", "Columns")
-            .addProperty(PropertySpec.builder("columns", Columns::class)
-                .receiver(companionObject.toClassName())
-                .getter(FunSpec.getterBuilder().addStatement("return Columns.raw(\"$columns\")").build())
-                .build()
-            )
+        //Maybe add comments and SupabaseInternal annotations
+        val function = FunSpec.builder("addSelectableTypes")
+            .addKdoc(COMMENT)
+            .receiver(Postgrest.Config::class)
+        columns.forEach { (qualifiedName, columns) ->
+            function.addStatement("columnRegistry.registerColumns(\"$qualifiedName\", \"$columns\")")
+        }
+        val fileSpec = FileSpec.builder(packageName, fileName)
+            .addFunction(function.build())
+            .addImport("io.github.jan.supabase.postgrest.annotations", "Selectable")
             .build()
         codeGenerator.createNewFile(
-            Dependencies(false, symbol.containingFile!!),
+            Dependencies(false, *sources.toTypedArray()),
             packageName,
-            className,
+            fileName,
             extensionName = "kt"
         ).bufferedWriter().use {
             fileSpec.writeTo(it)
@@ -210,6 +214,17 @@ class SelectableSymbolProcessor(
             append(operator)
             append(jsonPath.last())
         }
+    }
+
+    companion object {
+
+        val COMMENT = """
+            |Adds the types annotated with [Selectable] to the ColumnRegistry. Allows to use the automatically generated columns in the PostgrestQueryBuilder.
+            |
+            |This file is generated by the SelectableSymbolProcessor.
+            |Do not modify it manually.
+        """.trimMargin()
+
     }
 
 }

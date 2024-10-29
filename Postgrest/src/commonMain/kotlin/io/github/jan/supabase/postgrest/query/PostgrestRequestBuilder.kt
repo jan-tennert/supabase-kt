@@ -3,6 +3,7 @@ package io.github.jan.supabase.postgrest.query
 
 import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.auth.PostgrestFilterDSL
+import io.github.jan.supabase.postgrest.ColumnRegistry
 import io.github.jan.supabase.postgrest.PropertyConversionMethod
 import io.github.jan.supabase.postgrest.query.filter.PostgrestFilterBuilder
 import io.github.jan.supabase.postgrest.result.PostgrestResult
@@ -14,7 +15,10 @@ import kotlin.js.JsName
  * A builder for Postgrest requests.
  */
 @PostgrestFilterDSL
-open class PostgrestRequestBuilder(@PublishedApi internal val propertyConversionMethod: PropertyConversionMethod) {
+open class PostgrestRequestBuilder(
+    @PublishedApi internal val propertyConversionMethod: PropertyConversionMethod,
+    @PublishedApi internal val columnRegistry: ColumnRegistry
+) {
 
     /**
      * The [Count] algorithm to use to count rows in the table or view.
@@ -26,7 +30,7 @@ open class PostgrestRequestBuilder(@PublishedApi internal val propertyConversion
      * The [Returning] option to use.
      */
     var returning: Returning = Returning.Minimal
-        private set
+        internal set
     @SupabaseExperimental val params: MutableMap<String, List<String>> = mutableMapOf()
     @SupabaseExperimental val headers: HeadersBuilder = HeadersBuilder()
 
