@@ -30,8 +30,8 @@ class SelectableSymbolProcessor(
     private val options: Map<String, String>
 ) : SymbolProcessor {
 
-    val packageName = options["packageName"] ?: "io.github.jan.supabase.postgrest"
-    val fileName = options["fileName"] ?: "PostgrestColumns"
+    val packageName = options["selectablePackageName"] ?: "io.github.jan.supabase.postgrest"
+    val fileName = options["selectableFileName"] ?: "PostgrestColumns"
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbols = resolver.getSymbolsWithAnnotation(Selectable::class.java.name).filterIsInstance<KSClassDeclaration>()

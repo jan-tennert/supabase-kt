@@ -96,7 +96,7 @@ sealed interface Postgrest : MainPlugin<Postgrest.Config>, CustomSerializationPl
     data class Config(
         var defaultSchema: String = "public",
         var propertyConversionMethod: PropertyConversionMethod = PropertyConversionMethod.CAMEL_CASE_TO_SNAKE_CASE,
-        @property:SupabaseInternal var columnRegistry: ColumnRegistry = ColumnRegistry()
+        @property:SupabaseInternal var columnRegistry: ColumnRegistry = MapColumnRegistry()
     ): MainConfig(), CustomSerializationConfig {
 
         override var serializer: SupabaseSerializer? = null
