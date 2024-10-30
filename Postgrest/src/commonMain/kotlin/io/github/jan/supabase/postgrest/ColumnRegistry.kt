@@ -1,7 +1,9 @@
 package io.github.jan.supabase.postgrest
 
+import io.github.jan.supabase.annotations.SupabaseInternal
 import kotlin.reflect.KClass
 
+@SupabaseInternal
 class ColumnRegistry(
     private val map: MutableMap<String, String> = mutableMapOf()
 ) {

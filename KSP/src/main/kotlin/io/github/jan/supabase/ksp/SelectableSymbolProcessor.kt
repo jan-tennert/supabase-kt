@@ -11,8 +11,11 @@ import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.symbol.Modifier
+import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
+import io.github.jan.supabase.annotations.SupabaseInternal
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.annotations.ApplyFunction
 import io.github.jan.supabase.postgrest.annotations.Cast
@@ -61,9 +64,10 @@ class SelectableSymbolProcessor(
         columns: Map<String, String>,
         sources: List<KSFile>
     ) {
-        //Maybe add comments and SupabaseInternal annotations
         val function = FunSpec.builder("addSelectableTypes")
             .addKdoc(COMMENT)
+            .addAnnotation(AnnotationSpec.builder(ClassName.bestGuess("kotlin.OptIn")).addMember("%T::class",
+                SupabaseInternal::class).build())
             .receiver(Postgrest.Config::class)
         columns.forEach { (qualifiedName, columns) ->
             function.addStatement("columnRegistry.registerColumns(\"$qualifiedName\", \"$columns\")")

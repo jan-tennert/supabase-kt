@@ -59,6 +59,9 @@ val supabase = createSupabaseClient(
 }
 ```
 
+> [!NOTE]
+> Generating columns for `@Selectable` requires the [KSP compiler](/KSP) to be installed.
+
 # Usage
 
 See [Postgrest documentation](https://supabase.com/docs/reference/kotlin/select) for usage
