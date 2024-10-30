@@ -1,6 +1,6 @@
 # Supabase KSP compiler
 
-Currently only supports generating columns for `@Selectable` types.
+Currently only supports generating columns for `@Selectable` data classes.
 
 To install it, add the KSP Gradle plugin to your project:
 

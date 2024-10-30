@@ -60,7 +60,7 @@ val supabase = createSupabaseClient(
 ```
 
 > [!NOTE]
-> Generating columns for `@Selectable` requires the [KSP compiler](/KSP) to be installed.
+> Generating columns for `@Selectable` data classes requires the [KSP compiler](/KSP) to be installed.
 
 # Usage
 
