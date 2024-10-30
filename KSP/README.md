@@ -12,10 +12,7 @@ plugins {
 
 Then add the Supabase KSP compiler to your dependencies:
 
-> [!NOTE]
-> `VERSION` is the same as the Supabase-kt version.
-
-**JVM**:
+[**JVM**](https://kotlinlang.org/docs/ksp-quickstart.html#add-a-processor):
 
 ```kotlin
 depdencies {
@@ -23,7 +20,7 @@ depdencies {
 }
 ```
 
-**Multiplatform**:
+[**Multiplatform**](https://kotlinlang.org/docs/ksp-multiplatform.html):
 
 ```kotlin
 kotlin {
