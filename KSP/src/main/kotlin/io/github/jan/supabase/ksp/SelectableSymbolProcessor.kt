@@ -87,12 +87,13 @@ class SelectableSymbolProcessor(
     }
 
     private fun processParameters(parameter: KSValueParameter, resolver: Resolver): String {
-        val parameterClass = resolver.getClassDeclarationByName(parameter.type.resolve().declaration.qualifiedName!!)
-        val innerColumns = if(!isPrimitive(parameterClass!!.qualifiedName!!.asString())) {
+        val parameterClass = resolver.getClassDeclarationByName(parameter.type.resolve().declaration.qualifiedKSName)
+        requireNotNull(parameterClass) { "Parameter class is null" }
+        val innerColumns = if(!isPrimitive(parameterClass.qualifiedNameAsString)) {
             val annotation = parameterClass.annotations.getAnnotationOrNull(Selectable::class.java.simpleName)
             if(annotation == null) {
                 //Could be a JSON column or a custom type, so don't throw an error
-                logger.info("Type of parameter ${parameter.name!!.getShortName()} is not a primitive type and does not have @Selectable annotation", parameter)
+                logger.info("Type of parameter ${parameter.nameAsString} is not a primitive type and does not have @Selectable annotation", parameter)
                 ""
             } else {
                 val columns = parameterClass.primaryConstructor?.parameters
@@ -103,7 +104,7 @@ class SelectableSymbolProcessor(
                 columns.map { processParameters(it, resolver) }.joinToString(",")
             }
         } else ""
-        val alias = parameter.name!!.getShortName()
+        val alias = parameter.nameAsString
         val columnName = parameter.annotations.getAnnotationOrNull(ColumnName::class.java.simpleName)
             ?.arguments?.getParameterValue<String>(ColumnName.NAME_PARAMETER_NAME)
         val isForeign = parameter.annotations.getAnnotationOrNull(Foreign::class.java.simpleName) != null
@@ -125,15 +126,15 @@ class SelectableSymbolProcessor(
             innerColumns = innerColumns
         )
         checkValidCombinations(
-            parameterName = parameter.name!!.asString(),
+            parameterName = parameter.nameAsString,
             options = options,
             symbol = parameter
         )
         return buildColumns(
             options = options,
-            parameterName = parameter.name!!.asString(),
+            parameterName = parameter.nameAsString,
             symbol = parameter,
-            qualifiedTypeName = parameterClass.qualifiedName!!.asString()
+            qualifiedTypeName = parameterClass.simpleName.asString() //Qualified names are not supported in Kotlin JS
         )
     }
 
