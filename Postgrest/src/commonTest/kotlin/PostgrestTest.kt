@@ -7,6 +7,7 @@ import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
 import io.github.jan.supabase.postgrest.query.request.InsertRequestBuilder
 import io.github.jan.supabase.postgrest.query.request.UpsertRequestBuilder
+import io.github.jan.supabase.postgrest.query.select
 import io.github.jan.supabase.postgrest.result.PostgrestResult
 import io.github.jan.supabase.testing.assertMethodIs
 import io.github.jan.supabase.testing.assertPathIs
@@ -50,6 +51,28 @@ class PostgrestTest {
             requestHandler = {
                 assertMethodIs(HttpMethod.Get, it.method)
                 assertEquals(columns.value, it.url.parameters["select"])
+                assertEquals("value", it.headers["custom"])
+                assertEquals("value", it.url.parameters["custom"])
+                respond("")
+            }
+        )
+    }
+
+    @Test
+    fun testSelectWithSelectableType() {
+        testClient(
+            postgrestConfig = {
+                columnRegistry.registerColumns("TestType", "column1,column2")
+            },
+            request = { table ->
+                from(table).select<TestType> {
+                    headers["custom"] = "value"
+                    params["custom"] = listOf("value")
+                }
+            },
+            requestHandler = {
+                assertMethodIs(HttpMethod.Get, it.method)
+                assertEquals("column1,column2", it.url.parameters["select"])
                 assertEquals("value", it.headers["custom"])
                 assertEquals("value", it.url.parameters["custom"])
                 respond("")
@@ -362,11 +385,16 @@ class PostgrestTest {
 
     private fun testClient(
         table: String = "table",
+        postgrestConfig: Postgrest.Config.() -> Unit = {},
         request: suspend SupabaseClient.(table: String) -> PostgrestResult,
         requestHandler: suspend MockRequestHandleScope.(HttpRequestData) -> HttpResponseData = { respond("")},
     ) {
         val supabase = createMockedSupabaseClient(
-            configuration = configureClient
+            configuration = {
+                install(Postgrest) {
+                    postgrestConfig()
+                }
+            }
         ) {
             assertPathIs("/$table", it.url.pathAfterVersion())
             requestHandler(it)

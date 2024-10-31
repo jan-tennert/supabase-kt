@@ -3,8 +3,7 @@ package io.github.jan.supabase.postgrest.query
 
 import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.auth.PostgrestFilterDSL
-import io.github.jan.supabase.postgrest.ColumnRegistry
-import io.github.jan.supabase.postgrest.PropertyConversionMethod
+import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.query.filter.PostgrestFilterBuilder
 import io.github.jan.supabase.postgrest.result.PostgrestResult
 import io.ktor.http.HeadersBuilder
@@ -16,8 +15,7 @@ import kotlin.js.JsName
  */
 @PostgrestFilterDSL
 open class PostgrestRequestBuilder(
-    @PublishedApi internal val propertyConversionMethod: PropertyConversionMethod,
-    @PublishedApi internal val columnRegistry: ColumnRegistry
+    @PublishedApi internal val config: Postgrest.Config
 ) {
 
     /**
@@ -160,7 +158,7 @@ open class PostgrestRequestBuilder(
      * @param block The filter block
      */
     inline fun filter(block: @PostgrestFilterDSL PostgrestFilterBuilder.() -> Unit) {
-        val filter = PostgrestFilterBuilder(propertyConversionMethod, params)
+        val filter = PostgrestFilterBuilder(config.propertyConversionMethod, params)
         filter.block()
     }
 

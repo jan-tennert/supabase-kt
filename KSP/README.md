@@ -32,6 +32,7 @@ kotlin {
 }
 
 dependencies {
+    //Add KSP compiler to all targets that need processing
     //Advised to use Gradle Version Catalogs
     add("kspCommonMainMetadata", "io.github.jan-tennert.supabase:ksp-compiler:VERSION")
     add("kspJvm", "io.github.jan-tennert.supabase:ksp-compiler:VERSION")

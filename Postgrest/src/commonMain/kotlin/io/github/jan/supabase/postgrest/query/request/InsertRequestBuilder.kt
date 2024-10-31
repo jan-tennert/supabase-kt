@@ -1,14 +1,13 @@
 package io.github.jan.supabase.postgrest.query.request
 
-import io.github.jan.supabase.postgrest.ColumnRegistry
-import io.github.jan.supabase.postgrest.PropertyConversionMethod
+import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.query.PostgrestQueryBuilder
 import io.github.jan.supabase.postgrest.query.PostgrestRequestBuilder
 
 /**
  * Request builder for [PostgrestQueryBuilder.insert]
  */
-open class InsertRequestBuilder(propertyConversionMethod: PropertyConversionMethod, columnRegistry: ColumnRegistry): PostgrestRequestBuilder(propertyConversionMethod, columnRegistry) {
+open class InsertRequestBuilder(config: Postgrest.Config): PostgrestRequestBuilder(config) {
 
     /**
      * Make missing fields default to `null`.

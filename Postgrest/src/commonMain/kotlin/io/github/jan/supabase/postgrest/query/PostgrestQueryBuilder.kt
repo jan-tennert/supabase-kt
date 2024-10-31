@@ -44,8 +44,7 @@ class PostgrestQueryBuilder(
         request: @PostgrestFilterDSL SelectRequestBuilder.() -> Unit = {}
     ): PostgrestResult {
         val requestBuilder = SelectRequestBuilder(
-            postgrest.config.propertyConversionMethod,
-            postgrest.config.columnRegistry
+            postgrest.config
         ).apply {
             request(); params["select"] = listOf(columns.value)
         }
@@ -79,8 +78,7 @@ class PostgrestQueryBuilder(
         request: UpsertRequestBuilder.() -> Unit = {}
     ): PostgrestResult {
         val requestBuilder = UpsertRequestBuilder(
-            postgrest.config.propertyConversionMethod,
-            postgrest.config.columnRegistry
+            postgrest.config
         ).apply(request)
         val body = postgrest.serializer.encodeToJsonElement(values).jsonArray
         val columns = body.map { it.jsonObject.keys }.flatten().distinct()
@@ -136,8 +134,7 @@ class PostgrestQueryBuilder(
         request: InsertRequestBuilder.() -> Unit = {}
     ): PostgrestResult {
         val requestBuilder = InsertRequestBuilder(
-            postgrest.config.propertyConversionMethod,
-            postgrest.config.columnRegistry
+            postgrest.config
         ).apply(request)
         val body = postgrest.serializer.encodeToJsonElement(values).jsonArray
         val columns = body.map { it.jsonObject.keys }.flatten().distinct()
@@ -248,8 +245,7 @@ class PostgrestQueryBuilder(
 
     @PublishedApi
     internal inline fun newRequestBuilder(request: PostgrestRequestBuilder.() -> Unit = {}) = PostgrestRequestBuilder(
-        postgrest.config.propertyConversionMethod,
-        postgrest.config.columnRegistry
+        postgrest.config
     ).apply(request)
 
     companion object {

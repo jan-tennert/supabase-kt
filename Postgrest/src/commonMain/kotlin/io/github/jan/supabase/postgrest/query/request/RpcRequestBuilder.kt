@@ -1,8 +1,6 @@
 package io.github.jan.supabase.postgrest.query.request
 
-import io.github.jan.supabase.postgrest.ColumnRegistry
 import io.github.jan.supabase.postgrest.Postgrest
-import io.github.jan.supabase.postgrest.PropertyConversionMethod
 import io.github.jan.supabase.postgrest.RpcMethod
 import io.github.jan.supabase.postgrest.query.PostgrestRequestBuilder
 
@@ -11,9 +9,8 @@ import io.github.jan.supabase.postgrest.query.PostgrestRequestBuilder
  */
 class RpcRequestBuilder(
     defaultSchema: String,
-    propertyConversionMethod: PropertyConversionMethod,
-    columnRegistry: ColumnRegistry
-): PostgrestRequestBuilder(propertyConversionMethod, columnRegistry) {
+    config: Postgrest.Config
+): PostgrestRequestBuilder(config) {
 
     /**
      * The HTTP method to use. Default is POST

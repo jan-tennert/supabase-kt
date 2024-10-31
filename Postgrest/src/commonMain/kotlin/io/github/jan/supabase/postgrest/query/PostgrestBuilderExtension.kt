@@ -38,6 +38,6 @@ suspend inline fun <reified T : Any> PostgrestQueryBuilder.select(
  */
 @SupabaseExperimental
 inline fun <reified T : Any> PostgrestRequestBuilder.select() {
-    val columns = columnRegistry.getColumns(T::class)
+    val columns = config.columnRegistry.getColumns(T::class)
     select(Columns.raw(columns))
 }
