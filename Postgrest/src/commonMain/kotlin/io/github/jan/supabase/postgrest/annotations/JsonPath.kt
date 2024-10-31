@@ -38,7 +38,6 @@ annotation class JsonPath(vararg val path: String, val returnAsText: Boolean = f
 
     companion object {
         @SupabaseInternal const val PATH_PARAMETER_NAME = "path"
-        @SupabaseInternal const val KEY_PARAMETER_NAME = "key"
         @SupabaseInternal const val RETURN_AS_TEXT_PARAMETER_NAME = "returnAsText"
     }
 

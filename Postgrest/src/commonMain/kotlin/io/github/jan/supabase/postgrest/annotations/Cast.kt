@@ -4,7 +4,7 @@ import io.github.jan.supabase.annotations.SupabaseInternal
 
 /**
  * Annotation to cast a column in a PostgREST query.
- * @param type The type to cast the column to. If empty, the type will be inferred from the parameter type. For example, if the parameter is of type `String`, the column will be cast to `text`.
+ * @param type The type to cast the column to. If empty, the type will be inferred from the parameter type. For example, if the parameter is of type [String], the column will be cast to `text`. For all supported auto-casts see the primitive types in [Selectable].
  */
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.SOURCE)
