@@ -39,11 +39,7 @@ class SelectableSymbolProcessor(
         val types = hashMapOf<String, String>()
         symbols.forEach { symbol ->
             val className = symbol.simpleName.asString()
-            val qualifiedName = symbol.qualifiedName?.asString()
-            if(qualifiedName == null) {
-                logger.error("Qualified name of $className is null", symbol)
-                return@forEach;
-            }
+            val qualifiedName = symbol.simpleName.asString() //Kotlin JS doesn't support qualified names
             if (!symbol.modifiers.contains(Modifier.DATA)) {
                 logger.error("The class $className is not a data class", symbol)
                 return emptyList()
@@ -76,12 +72,13 @@ class SelectableSymbolProcessor(
             .addFunction(function.build())
             .addImport("io.github.jan.supabase.postgrest.annotations", "Selectable")
             .build()
-        codeGenerator.createNewFile(
+        val stream = codeGenerator.createNewFile(
             Dependencies(false, *sources.toTypedArray()),
             packageName,
             fileName,
             extensionName = "kt"
-        ).bufferedWriter().use {
+        )
+        stream.bufferedWriter().use {
             fileSpec.writeTo(it)
         }
     }

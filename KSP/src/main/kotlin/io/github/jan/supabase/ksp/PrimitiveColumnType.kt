@@ -1,5 +1,6 @@
 package io.github.jan.supabase.ksp
 
+//Used for auto-casting, when no type is specified
 val primitiveColumnTypes = mapOf<String, String>(
     "kotlin.String" to "text",
     "kotlin.Int" to "int4",
