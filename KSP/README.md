@@ -40,6 +40,8 @@ dependencies {
     //Add KSP compiler to all targets that need processing
     //Advised to use Gradle Version Catalogs
     add("kspCommonMainMetadata", "io.github.jan-tennert.supabase:ksp-compiler:VERSION")
+    
+    //Note: If only the common target needs processing, you don't need the following lines
     add("kspJvm", "io.github.jan-tennert.supabase:ksp-compiler:VERSION")
     add("kspAndroid", "io.github.jan-tennert.supabase:ksp-compiler:VERSION")
     add("kspIosX64", "io.github.jan-tennert.supabase:ksp-compiler:VERSION")
