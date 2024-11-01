@@ -29,6 +29,11 @@ kotlin {
     androidTarget()
     iosX64()
     //...
+    
+    //Might need to add this if you cannot see generated code in your IDE
+    sourceSets.named("commonMain").configure {
+        kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+    }
 }
 
 dependencies {
@@ -39,3 +44,11 @@ dependencies {
     add("kspAndroid", "io.github.jan-tennert.supabase:ksp-compiler:VERSION")
     add("kspIosX64", "io.github.jan-tennert.supabase:ksp-compiler:VERSION")
 }
+
+//Might need to add this if you cannot see generated code in your IDE
+project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
+    if(name != "kspCommonMainKotlinMetadata") {
+        dependsOn("kspCommonMainKotlinMetadata")
+    }
+}
+```
