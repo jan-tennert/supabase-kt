@@ -75,7 +75,7 @@ comments:
     allowParamOnConstructorProperties: false
   UndocumentedPublicClass:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/mingwX64Test/**', '**/macosTest/**', '**/appleTest/**', '**/linuxTest/**', '**/wasmJsTest/**']
+    excludes: ['**/KSP/**', '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/mingwX64Test/**', '**/macosTest/**', '**/appleTest/**', '**/linuxTest/**', '**/wasmJsTest/**']
     searchInNestedClass: true
     searchInInnerClass: true
     searchInInnerObject: false
@@ -86,14 +86,14 @@ comments:
       - 'SupabaseExperimental'
   UndocumentedPublicFunction:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/mingwX64Test/**', '**/macosTest/**', '**/appleTest/**', '**/linuxTest/**', '**/wasmJsTest/**']
+    excludes: ['**/KSP/**', '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/mingwX64Test/**', '**/macosTest/**', '**/appleTest/**', '**/linuxTest/**', '**/wasmJsTest/**']
     searchProtectedFunction: false
     ignoreAnnotated:
       - 'SupabaseInternal'
       - 'SupabaseExperimental'
   UndocumentedPublicProperty:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/mingwX64Test/**', '**/macosTest/**', '**/appleTest/**', '**/linuxTest/**', '**/wasmJsTest/**']
+    excludes: ['**/KSP/**', '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/mingwX64Test/**', '**/macosTest/**', '**/appleTest/**', '**/linuxTest/**', '**/wasmJsTest/**']
     searchProtectedProperty: false
     ignoreAnnotated:
       - 'SupabaseInternal'

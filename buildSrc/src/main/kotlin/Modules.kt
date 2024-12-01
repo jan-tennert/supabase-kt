@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.jetbrains.compose.desktop.DesktopExtension
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler

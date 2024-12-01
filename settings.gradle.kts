@@ -14,6 +14,7 @@ plugins {
 // Main Modules
 include("Auth")
 include("Postgrest")
+include("KSP")
 include("Storage")
 include("Realtime")
 include("Functions")
@@ -51,6 +52,7 @@ project(":Storage").name = "storage-kt"
 project(":Realtime").name = "realtime-kt"
 project(":Functions").name = "functions-kt"
 project(":Supabase").name = "supabase-kt"
+project(":KSP").name = "ksp-compiler"
 project(":plugins:ApolloGraphQL").name = "apollo-graphql"
 project(":plugins:ComposeAuth").name = "compose-auth"
 project(":plugins:ComposeAuthUI").name = "compose-auth-ui"

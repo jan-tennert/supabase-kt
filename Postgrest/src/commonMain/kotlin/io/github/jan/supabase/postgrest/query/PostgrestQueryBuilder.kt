@@ -43,7 +43,9 @@ class PostgrestQueryBuilder(
         columns: Columns = Columns.ALL,
         request: @PostgrestFilterDSL SelectRequestBuilder.() -> Unit = {}
     ): PostgrestResult {
-        val requestBuilder = SelectRequestBuilder(postgrest.config.propertyConversionMethod).apply {
+        val requestBuilder = SelectRequestBuilder(
+            postgrest.config
+        ).apply {
             request(); params["select"] = listOf(columns.value)
         }
         val selectRequest = SelectRequest(
@@ -75,7 +77,9 @@ class PostgrestQueryBuilder(
         values: List<T>,
         request: UpsertRequestBuilder.() -> Unit = {}
     ): PostgrestResult {
-        val requestBuilder = UpsertRequestBuilder(postgrest.config.propertyConversionMethod).apply(request)
+        val requestBuilder = UpsertRequestBuilder(
+            postgrest.config
+        ).apply(request)
         val body = postgrest.serializer.encodeToJsonElement(values).jsonArray
         val columns = body.map { it.jsonObject.keys }.flatten().distinct()
         if(columns.isNotEmpty()) requestBuilder.params["columns"] = listOf(columns.joinToString(","))
@@ -129,7 +133,9 @@ class PostgrestQueryBuilder(
         values: List<T>,
         request: InsertRequestBuilder.() -> Unit = {}
     ): PostgrestResult {
-        val requestBuilder = InsertRequestBuilder(postgrest.config.propertyConversionMethod).apply(request)
+        val requestBuilder = InsertRequestBuilder(
+            postgrest.config
+        ).apply(request)
         val body = postgrest.serializer.encodeToJsonElement(values).jsonArray
         val columns = body.map { it.jsonObject.keys }.flatten().distinct()
         if(columns.isNotEmpty()) requestBuilder.params["columns"] = listOf(columns.joinToString(","))
@@ -174,7 +180,7 @@ class PostgrestQueryBuilder(
         crossinline update: PostgrestUpdate.() -> Unit = {},
         request: PostgrestRequestBuilder.() -> Unit = {}
     ): PostgrestResult {
-        val requestBuilder = PostgrestRequestBuilder(postgrest.config.propertyConversionMethod).apply(request)
+        val requestBuilder = newRequestBuilder(request)
         val updateRequest = UpdateRequest(
             body = buildPostgrestUpdate(postgrest.config.propertyConversionMethod, postgrest.serializer, update),
             returning = requestBuilder.returning,
@@ -201,7 +207,7 @@ class PostgrestQueryBuilder(
         value: T,
         request: PostgrestRequestBuilder.() -> Unit = {}
     ): PostgrestResult {
-        val requestBuilder = PostgrestRequestBuilder(postgrest.config.propertyConversionMethod).apply(request)
+        val requestBuilder = newRequestBuilder(request)
         val updateRequest = UpdateRequest(
             returning = requestBuilder.returning,
             count = requestBuilder.count,
@@ -226,7 +232,7 @@ class PostgrestQueryBuilder(
     suspend inline fun delete(
         request: PostgrestRequestBuilder.() -> Unit = {}
     ): PostgrestResult {
-        val requestBuilder = PostgrestRequestBuilder(postgrest.config.propertyConversionMethod).apply(request)
+        val requestBuilder = newRequestBuilder(request)
         val deleteRequest = DeleteRequest(
             returning = requestBuilder.returning,
             count = requestBuilder.count,
@@ -236,6 +242,11 @@ class PostgrestQueryBuilder(
         )
         return RestRequestExecutor.execute(postgrest = postgrest, path = table, request = deleteRequest)
     }
+
+    @PublishedApi
+    internal inline fun newRequestBuilder(request: PostgrestRequestBuilder.() -> Unit = {}) = PostgrestRequestBuilder(
+        postgrest.config
+    ).apply(request)
 
     companion object {
         const val HEADER_PREFER = "Prefer"

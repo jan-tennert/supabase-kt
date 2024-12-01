@@ -1,9 +1,13 @@
+import io.github.jan.supabase.postgrest.MapColumnRegistry
+import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.query.Count
 import io.github.jan.supabase.postgrest.query.Order
 import io.github.jan.supabase.postgrest.query.Returning
+import io.github.jan.supabase.postgrest.query.select
 import io.ktor.http.HttpHeaders
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 
 class PostgrestRequestBuilderTest {
 
@@ -21,6 +25,19 @@ class PostgrestRequestBuilderTest {
             select()
         }
         assertEquals(Returning.Representation(), request.returning)
+    }
+
+    @Test
+    fun testSelectWithSelectable() {
+        val columnRegistry = MapColumnRegistry()
+        columnRegistry.registerColumns("TestType", "column1, column2")
+        val request = postgrestRequest(
+            config = Postgrest.Config(columnRegistry = columnRegistry)
+        ) {
+            select<TestType>()
+        }
+        assertIs<Returning.Representation>(request.returning)
+        assertEquals("column1,column2", (request.returning as Returning.Representation).columns.value)
     }
 
     @Test
