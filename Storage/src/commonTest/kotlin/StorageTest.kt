@@ -5,6 +5,7 @@ import io.github.jan.supabase.auth.minimalSettings
 import io.github.jan.supabase.storage.Storage
 import io.github.jan.supabase.storage.resumable.MemoryResumableCache
 import io.github.jan.supabase.storage.storage
+import io.github.jan.supabase.testing.TEST_JWT
 import io.github.jan.supabase.testing.assertMethodIs
 import io.github.jan.supabase.testing.assertPathIs
 import io.github.jan.supabase.testing.createMockedSupabaseClient
@@ -193,7 +194,7 @@ class StorageTest {
     @Test
     fun testAuthHeaderWhenAuthInstalled() {
         runTest {
-            val key = "test-key"
+            val key = TEST_JWT
             val client = createMockedSupabaseClient(
                 configuration = {
                     install(Storage) {

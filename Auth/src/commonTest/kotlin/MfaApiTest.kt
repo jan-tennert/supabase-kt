@@ -10,6 +10,7 @@ import io.github.jan.supabase.auth.providers.builtin.Phone
 import io.github.jan.supabase.auth.user.UserInfo
 import io.github.jan.supabase.auth.user.UserMfaFactor
 import io.github.jan.supabase.auth.user.UserSession
+import io.github.jan.supabase.testing.TEST_JWT
 import io.github.jan.supabase.testing.assertMethodIs
 import io.github.jan.supabase.testing.assertPathIs
 import io.github.jan.supabase.testing.createMockedSupabaseClient
@@ -165,7 +166,7 @@ class MfaApiTest {
             ) {
                 respondJson(UserInfo(id = "id", aud = "aud", factors = listOf(expectedFactor)))
             }
-            client.auth.importAuthToken("token")
+            client.auth.importAuthToken(TEST_JWT)
             val factors = client.auth.mfa.retrieveFactorsForCurrentUser()
             assertEquals(1, factors.size)
             assertEquals(expectedFactor, factors.first())
@@ -212,7 +213,8 @@ class MfaApiTest {
         val data = buildJsonObject {
             put("aal", currentAAL.name.lowercase())
         }
-        val token = "ignore.${data.toString().encodeBase64()}"
+        val encoded = data.toString().encodeBase64()
+        val token = "$encoded.$encoded.$encoded"
         val client = createMockedSupabaseClient(
             configuration = configuration
         ) {
@@ -230,7 +232,8 @@ class MfaApiTest {
             val data = buildJsonObject {
                 put("aal", current.name.lowercase())
             }
-            val token = "ignore.${data.toString().encodeBase64()}"
+            val encoded = data.toString().encodeBase64()
+            val token = "$encoded.$encoded.$encoded"
             val client = createMockedSupabaseClient(
                 configuration = configuration
             ) {

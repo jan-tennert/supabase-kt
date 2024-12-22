@@ -11,7 +11,7 @@ import io.ktor.client.request.HttpResponseData
 
 fun createMockedSupabaseClient(
     supabaseUrl: String = "https://projectref.supabase.co",
-    supabaseKey: String = "project-anon-key",
+    supabaseKey: String = TEST_JWT,
     configuration: SupabaseClientBuilder.() -> Unit = {},
     requestHandler: suspend MockRequestHandleScope.(HttpRequestData) -> HttpResponseData = { respond("") },
 ): SupabaseClient {

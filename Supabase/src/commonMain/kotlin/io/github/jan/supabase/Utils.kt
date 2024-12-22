@@ -65,3 +65,20 @@ suspend inline fun <reified T> HttpResponse.bodyOrNull(): T? {
         null
     }
 }
+
+val BASE64URL_REGEX = "^([a-z0-9_-]{4})*(\$|[a-z0-9_-]{3}\$|[a-z0-9_-]{2}\$)".toRegex(RegexOption.IGNORE_CASE)
+
+@SupabaseInternal
+fun isJwt(value: String): Boolean {
+    val value = if(value.startsWith("Bearer ")) value.substring("Bearer ".length).trim() else value.trim()
+    if(value.isEmpty()) return false
+
+    val parts = value.split(".")
+
+    if(parts.size != 3) return false
+
+    for(part in parts) {
+        if(part.length < 4 || !BASE64URL_REGEX.matches(part)) return false
+    }
+    return true
+}

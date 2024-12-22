@@ -13,6 +13,7 @@ import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.auth.providers.builtin.OTP
 import io.github.jan.supabase.auth.providers.builtin.Phone
 import io.github.jan.supabase.auth.status.SessionSource
+import io.github.jan.supabase.testing.TEST_JWT
 import io.github.jan.supabase.testing.assertMethodIs
 import io.github.jan.supabase.testing.assertPathIs
 import io.github.jan.supabase.testing.createMockedSupabaseClient
@@ -615,7 +616,7 @@ class AuthRequestTest {
     @Test
     fun testRetrieveUser() {
         runTest {
-            val expectedJWT = "token"
+            val expectedJWT = TEST_JWT
             val client = createMockedSupabaseClient(configuration = configuration) {
                 assertMethodIs(HttpMethod.Get, it.method)
                 assertPathIs("/user", it.url.pathAfterVersion())
@@ -677,7 +678,7 @@ class AuthRequestTest {
 
     private fun sampleUserSession() = """
         {
-        "access_token": "token",
+        "access_token": "$TEST_JWT",
         "refresh_token": "refresh",
         "token_type": "bearer",
         "expires_in": 3600

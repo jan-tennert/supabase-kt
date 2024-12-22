@@ -11,6 +11,7 @@ import io.github.jan.supabase.auth.minimalSettings
 import io.github.jan.supabase.graphql.ApolloHttpInterceptor
 import io.github.jan.supabase.graphql.GraphQL
 import io.github.jan.supabase.graphql.graphql
+import io.github.jan.supabase.testing.TEST_JWT
 import io.github.jan.supabase.testing.createMockedSupabaseClient
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -22,12 +23,12 @@ class ApolloHttpInterceptorTest {
     fun testApolloHttpInterceptorWithApiKey() {
         runTest {
             val supabaseClient = createMockedSupabaseClient(
-                supabaseKey = "testkey",
+                supabaseKey = TEST_JWT,
                 configuration = {
                     install(GraphQL)
                 }
             )
-            testInterceptor(supabaseClient, "testkey")
+            testInterceptor(supabaseClient, TEST_JWT)
         }
     }
 
@@ -42,8 +43,8 @@ class ApolloHttpInterceptorTest {
                     }
                 }
             )
-            supabaseClient.auth.importAuthToken("testtoken")
-            testInterceptor(supabaseClient, "testtoken")
+            supabaseClient.auth.importAuthToken(TEST_JWT)
+            testInterceptor(supabaseClient, TEST_JWT)
         }
     }
 
@@ -54,11 +55,11 @@ class ApolloHttpInterceptorTest {
                 configuration = {
                     install(GraphQL)
                     accessToken = {
-                        "testtoken"
+                        TEST_JWT
                     }
                 }
             )
-            testInterceptor(supabaseClient, "testtoken")
+            testInterceptor(supabaseClient, TEST_JWT)
         }
     }
 
@@ -68,11 +69,11 @@ class ApolloHttpInterceptorTest {
             val supabaseClient = createMockedSupabaseClient(
                 configuration = {
                     install(GraphQL) {
-                        jwtToken = "testtoken"
+                        jwtToken = TEST_JWT
                     }
                 }
             )
-            testInterceptor(supabaseClient, "testtoken")
+            testInterceptor(supabaseClient, TEST_JWT)
         }
     }
 

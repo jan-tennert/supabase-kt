@@ -5,6 +5,7 @@ import io.github.jan.supabase.auth.minimalSettings
 import io.github.jan.supabase.functions.FunctionRegion
 import io.github.jan.supabase.functions.Functions
 import io.github.jan.supabase.functions.functions
+import io.github.jan.supabase.testing.TEST_JWT
 import io.github.jan.supabase.testing.createMockedSupabaseClient
 import io.github.jan.supabase.testing.pathAfterVersion
 import io.github.jan.supabase.testing.toJsonElement
@@ -28,7 +29,7 @@ class FunctionsTest {
     @Test
     fun testAuthorizationHeaderAuth() {
         runTest {
-            val expectedJWT = "jwt"
+            val expectedJWT = TEST_JWT
             val supabase = createMockedSupabaseClient(
                 configuration ={
                     install(Auth) {
@@ -51,7 +52,7 @@ class FunctionsTest {
     @Test
     fun testAuthorizationHeaderCustomToken() {
         runTest {
-            val expectedJWT = "jwt"
+            val expectedJWT = TEST_JWT
             val supabase = createMockedSupabaseClient(
                 configuration = {
                     install(Functions) {

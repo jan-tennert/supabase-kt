@@ -7,6 +7,7 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.minimalSettings
 import io.github.jan.supabase.auth.user.UserInfo
 import io.github.jan.supabase.auth.user.UserMfaFactor
+import io.github.jan.supabase.testing.TEST_JWT
 import io.github.jan.supabase.testing.assertMethodIs
 import io.github.jan.supabase.testing.assertPathIs
 import io.github.jan.supabase.testing.createMockedSupabaseClient
@@ -39,7 +40,7 @@ class AdminApiTest {
     @Test
     fun testSignOut() {
         runTest {
-            val jwt = "jwt"
+            val jwt = TEST_JWT
             val scope = SignOutScope.LOCAL
             val client = createMockedSupabaseClient(
                 configuration = configuration

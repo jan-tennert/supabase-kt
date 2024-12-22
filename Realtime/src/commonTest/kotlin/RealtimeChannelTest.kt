@@ -18,6 +18,7 @@ import io.github.jan.supabase.realtime.broadcastFlow
 import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.realtime.postgresChangeFlow
 import io.github.jan.supabase.realtime.realtime
+import io.github.jan.supabase.testing.TEST_JWT
 import io.github.jan.supabase.testing.assertPathIs
 import io.github.jan.supabase.testing.pathAfterVersion
 import io.github.jan.supabase.testing.toJsonElement
@@ -142,7 +143,7 @@ class RealtimeChannelTest {
 
     @Test
     fun testSendingPayloadWithAuthJWT() {
-        val expectedAuthToken = "authToken"
+        val expectedAuthToken = TEST_JWT
         runTest {
             createTestClient(
                 wsHandler = { i, _ ->

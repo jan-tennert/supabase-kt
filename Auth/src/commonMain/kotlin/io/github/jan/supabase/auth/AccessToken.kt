@@ -17,7 +17,7 @@ suspend fun SupabaseClient.resolveAccessToken(
     jwtToken: String? = null,
     keyAsFallback: Boolean = true
 ): String? {
-    val key = if(keyAsFallback) supabaseKey else null
+    val key = if(keyAsFallback && isApiKeyJWT) supabaseKey else null
     return jwtToken ?: accessToken?.invoke()
     ?: pluginManager.getPluginOrNull(Auth)?.currentAccessTokenOrNull() ?: key
 }

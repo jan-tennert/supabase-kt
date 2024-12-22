@@ -16,9 +16,11 @@ internal class ApolloHttpInterceptor(private val supabaseClient: SupabaseClient,
         chain: HttpInterceptorChain
     ): ApolloHttpResponse {
         GraphQL.logger.d { "Intercepting Apollo request with url ${request.url}" }
-        val accessToken = supabaseClient.resolveAccessToken(config.jwtToken) ?: error("Access token should not be null")
+        val accessToken = supabaseClient.resolveAccessToken(config.jwtToken)
         val newRequest = request.newBuilder().apply {
-            addHeader(HttpHeaders.Authorization, "Bearer $accessToken")
+            accessToken?.let {
+                addHeader(HttpHeaders.Authorization, "Bearer $it")
+            }
         }
         return chain.proceed(newRequest.build())
     }

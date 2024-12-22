@@ -5,6 +5,7 @@ import io.github.jan.supabase.BuildConfig
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.annotations.SupabaseInternal
 import io.github.jan.supabase.exceptions.HttpRequestException
+import io.github.jan.supabase.isJwt
 import io.github.jan.supabase.logging.d
 import io.github.jan.supabase.logging.e
 import io.github.jan.supabase.supabaseJson
@@ -55,6 +56,7 @@ class KtorSupabaseHttpClient @SupabaseInternal constructor(
             url(url)
             builder()
         }
+        checkAuthorizationHeader(request)
         val endPoint = request.url.encodedPath
         SupabaseClient.LOGGER.d { "Starting ${request.method.value} request to endpoint $endPoint" }
 
@@ -99,6 +101,13 @@ class KtorSupabaseHttpClient @SupabaseInternal constructor(
     }
 
     fun close() = httpClient.close()
+
+    private fun checkAuthorizationHeader(requestBuilder: HttpRequestBuilder) {
+        val authHeader = requestBuilder.headers["Authorization"] ?: return
+        if(!isJwt(authHeader.substringAfter("Bearer "))) {
+            error("The Authorization header must be a JWT token")
+        }
+    }
 
     private fun HttpClientConfig<*>.applyDefaultConfiguration(modifiers: List<HttpClientConfig<*>.() -> Unit>) {
         install(DefaultRequest) {

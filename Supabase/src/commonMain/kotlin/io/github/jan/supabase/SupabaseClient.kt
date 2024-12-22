@@ -19,17 +19,17 @@ import io.ktor.client.engine.HttpClientEngine
 sealed interface SupabaseClient {
 
     /**
-     * The supabase url with either a http or https scheme.
+     * The Supabase url with either an HTTP or HTTPs scheme.
      */
     val supabaseHttpUrl: String
 
     /**
-     * The base supabase url without any scheme
+     * The base Supabase url without any scheme
      */
     val supabaseUrl: String
 
     /**
-     * The api key for interacting with the supabase api
+     * The api key for interacting with the Supabase API
      */
     val supabaseKey: String
 
@@ -39,7 +39,7 @@ sealed interface SupabaseClient {
     val pluginManager: PluginManager
 
     /**
-     * The http client used to interact with the Supabase api
+     * The http client used to interact with the Supabase API
      */
     val httpClient: KtorSupabaseHttpClient
 
@@ -58,6 +58,12 @@ sealed interface SupabaseClient {
      */
     @SupabaseInternal
     val accessToken: AccessTokenProvider?
+
+    /**
+     * Whether the api key is a JWT token. This property only exists to not re-check the api key type every time it is needed.
+     */
+    @SupabaseInternal
+    val isApiKeyJWT: Boolean
 
     /**
      * Releases all resources held by the [httpClient] and all plugins the [pluginManager]
@@ -108,6 +114,16 @@ internal class SupabaseClientImpl(
         "https://$supabaseUrl"
     } else {
         "http://$supabaseUrl"
+    }
+
+    override val isApiKeyJWT: Boolean = isJwt(supabaseKey)
+
+    init {
+        if (!isApiKeyJWT) {
+            SupabaseClient.LOGGER.i {
+                "The Supabase API key is not a JWT token. It will not be used for authentication."
+            }
+        }
     }
 
  //   override val coroutineContext = Dispatchers.Default + SupervisorJob()
